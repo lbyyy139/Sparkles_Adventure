@@ -1,10 +1,7 @@
-// GameManager.cs
-// ÕâÊÇÒ»¸ö¡°µ¥Àı¡±¹ÜÀíÆ÷£¬Ëü»áÔÚÓÎÏ·Æô¶¯Ê±ÔËĞĞ£¬
-// ¸ºÔğ´¦ÀíºÚ³¡µ­ÈëºÍ¹á´©ËùÓĞ³¡¾°µÄ±³¾°ÒôÀÖ¡£
-// ** ÒÑ¸üĞÂ£ºĞŞ¸´ÁË·µ»ØÖ÷Ò³Ê±µÄºÚÆÁBUG£¬²¢Ìí¼ÓÁË·Ö±æÂÊËø¶¨ **
+
 
 using UnityEngine;
-using UnityEngine.SceneManagement; // <-- ĞèÒªÕâ¸öÀ´¼àÌı³¡¾°¼ÓÔØ
+using UnityEngine.SceneManagement; 
 using UnityEngine.UI;
 using System.Collections;
 
@@ -12,41 +9,40 @@ using System.Collections;
 public class GameManager : MonoBehaviour
 {
     [Header("Setup")]
-    [Tooltip("¡¾ÖØÒª¡¿ÄãµÄÖ÷²Ëµ¥³¡¾°µÄÎÄ¼şÃû (±ØĞëÍêÈ«Æ¥Åä)")]
+    [Tooltip("ã€ Important ã€‘ The file name of your main menu scene (must match exactly)")]
     public string mainMenuSceneName = "SampleScene";
 
-    [Tooltip("¡¾ÖØÒª¡¿ÄãµÄµ­Èë/µ­³öºÚÉ« Image ÎïÌåµÄÃû×Ö")]
+    [Tooltip("ã€ Important ã€‘ The file name of your main menu scene (must match exactly)")]
     public string fadeScreenObjectName = "FadeScreen";
 
     [Header("Background Music")]
-    [Tooltip("ÍÏ×§ÄãµÄ±³¾°ÒôÀÖ(mp3/wav)µ½ÕâÀï")]
+    [Tooltip("Drag and drop your background music (MP3/WAV) here")]
     public AudioClip backgroundMusic;
 
-    [Tooltip("ÔÚ Inspector ÖĞµ÷½Ú±³¾°ÒôÀÖµÄÒôÁ¿")]
+    [Tooltip("Adjust the volume of background music in the Inspector")]
     [Range(0f, 1f)]
     public float musicVolume = 0.5f;
 
     [Header("Scene Fade-In")]
-    [Tooltip("´ÓºÚ³¡µ­Èëµ½³¡¾°ĞèÒª¶à³¤Ê±¼ä")]
+    [Tooltip("How long does it take to fade from the black field to the scene")]
     public float fadeDuration = 1.5f;
 
-    // --- µ¥ÀıÄ£Ê½ ---
+
     public static GameManager instance;
 
-    // --- Ë½ÓĞ±äÁ¿ ---
+
     private AudioSource audioSource;
-    private Image fadeScreen; // ÎÒÃÇ²»ÔÙÔÚ Inspector ÖĞÉèÖÃËü
+    private Image fadeScreen; 
 
     void Awake()
     {
-        // --- 1. µ¥ÀıÄ£Ê½ÊµÏÖ ---
+
         if (instance == null)
         {
             instance = this;
             DontDestroyOnLoad(gameObject);
 
-            // --- 2. ¶©ÔÄ¡°³¡¾°¼ÓÔØÍê±Ï¡±ÊÂ¼ş ---
-            // 'OnSceneLoaded' ÊÇÎÒÃÇÉÔºó´´½¨µÄÒ»¸öº¯Êı
+
             SceneManager.sceneLoaded += OnSceneLoaded;
         }
         else
@@ -55,12 +51,7 @@ public class GameManager : MonoBehaviour
             return;
         }
 
-        // --- 3. (ĞÂ¹¦ÄÜ) Ëø¶¨·Ö±æÂÊ ---
-        // Ç¿ÖÆÓÎÏ·ÒÔ 1920x1080 ´°¿ÚÄ£Ê½ÔËĞĞ
-        // (Èç¹ûÄãÏëÒªÈ«ÆÁ£¬°Ñ FullScreenMode.Windowed ¸ÄÎª FullScreenMode.ExclusiveFullScreen)
-        //Screen.SetResolution(1920, 1080, FullScreenMode.Windowed);
 
-        // --- 4. ÉèÖÃ±³¾°ÒôÀÖ (ºÍÒÔÇ°Ò»Ñù) ---
         audioSource = GetComponent<AudioSource>();
         audioSource.clip = backgroundMusic;
         audioSource.volume = musicVolume;
@@ -70,45 +61,43 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
-        // ÒôÀÖÖ»ÔÚ Start() ÖĞ²¥·ÅÒ»´Î
-        // (µ­ÈëĞ§¹ûÒÑ¾­ÒÆµ½ OnSceneLoaded ÖĞÁË)
+
         if (!audioSource.isPlaying)
         {
             audioSource.Play();
         }
     }
 
-    // --- 5. (ĞÂ¹¦ÄÜ) ³¡¾°¼ÓÔØÊ±µÄ´¦Àíº¯Êı ---
-    // Ã¿µ±Ò»¸öĞÂ³¡¾°¼ÓÔØÍê³ÉÊ±£¬Õâ¸öº¯Êı¾Í»á±»×Ô¶¯µ÷ÓÃ
+
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        // ÎÒÃÇ¼ì²é¼ÓÔØµÄ³¡¾°ÊÇ·ñÊÇÖ÷²Ëµ¥
+
         if (scene.name == mainMenuSceneName)
         {
-            // ÔÚĞÂ³¡¾°ÖĞ£¬Í¨¹ıÃû×Ö²éÕÒ FadeScreen ÎïÌå
+
             GameObject fadeScreenObj = GameObject.Find(fadeScreenObjectName);
 
             if (fadeScreenObj != null)
             {
-                // ÕÒµ½ÁË£¡»ñÈ¡ËüµÄ Image ×é¼ş
+
                 fadeScreen = fadeScreenObj.GetComponent<Image>();
 
-                // È·±£ËüÔÚ¿ªÊ¼Ê±ÊÇ¼¤»îµÄÇÒ²»Í¸Ã÷ (È«ºÚ)
+
                 fadeScreen.gameObject.SetActive(true);
                 fadeScreen.color = Color.black;
 
-                // ¿ªÊ¼µ­ÈëĞ­³Ì
+
                 StartCoroutine(FadeIn());
             }
             else
             {
-                // Èç¹ûÕÒ²»µ½£¬ÔÚ¿ØÖÆÌ¨¸øÌáÊ¾
-                Debug.LogWarning("GameManager: ÔÚ " + scene.name + " ³¡¾°ÖĞÃ»ÓĞÕÒµ½ÃûÎª '" + fadeScreenObjectName + "' µÄÎïÌå¡£");
+
+                Debug.LogWarning("GameManager: No object named '+fadeScreenObject Name+' was found in the '+scene. name+' scene.");
             }
         }
     }
 
-    // --- 6. µ­ÈëĞ­³Ì (ºÍÒÔÇ°Ò»Ñù) ---
+
     private IEnumerator FadeIn()
     {
         float timer = 0f;
@@ -121,11 +110,11 @@ public class GameManager : MonoBehaviour
             yield return null;
         }
 
-        fadeScreen.color = Color.clear; // ÉèÎªÍêÈ«Í¸Ã÷
-        fadeScreen.gameObject.SetActive(false); // ½ûÓÃ
+        fadeScreen.color = Color.clear; 
+        fadeScreen.gameObject.SetActive(false); 
     }
 
-    // (OnValidate ±£³Ö²»±ä£¬ÓÃÓÚÔÚ Inspector ÖĞµ÷½ÚÒôÁ¿)
+
     void OnValidate()
     {
         if (audioSource != null)
@@ -134,7 +123,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    // (µ± GameManager ±»Ïú»ÙÊ±£¬È¡Ïû¶©ÔÄÊÂ¼ş£¬·ÀÖ¹ÄÚ´æĞ¹Â©)
+
     void OnDestroy()
     {
         SceneManager.sceneLoaded -= OnSceneLoaded;
